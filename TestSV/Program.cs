@@ -11,32 +11,60 @@ namespace TestSV
     {
         static void Main(string[] args)
         {
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-            Logger.LogInfor("//-----------------------------------------Start test service-----------------------------//");
-            Console.WriteLine("Start test service");
+            HttpClientBase sv = new HttpClientBase();
 
-            var _testProcess = new TestProcess();
+            string ulrBase = System.Configuration.ConfigurationManager.AppSettings["ApiUrlBase"];
+            string Action = System.Configuration.ConfigurationManager.AppSettings["ApiAction"];
+            var obj = new WeatherForecastRq
+            {
+                Id = 1
+            };
+            sv.Exercute<WeatherForecastRq>("POST", ulrBase, Action, obj, null);
 
-            _testProcess.totalTaskSendAlias = int.Parse(System.Configuration.ConfigurationManager.AppSettings["totalTaskSendAlias"]);
-            _testProcess.totalRequestAlias = int.Parse(System.Configuration.ConfigurationManager.AppSettings["totalRequestAlias"]);
+            string merchant = string.Empty;
+            try
+            {
+                merchant = System.Configuration.ConfigurationManager.AppSettings["merchant"];
+                Logger.LogInfor("//-----------------------------------------Start test service-----------------------------//");
+                Console.WriteLine($"Start Sms service for merchant {merchant}.");
 
-            _testProcess.totalTaskSend8149 = int.Parse(System.Configuration.ConfigurationManager.AppSettings["totalTaskSend8149"]);
-            _testProcess.totalRequest8x49 = int.Parse(System.Configuration.ConfigurationManager.AppSettings["totalRequest8x49"]);
-            Logger.LogInfor($"totalTaskSend8149 = {_testProcess.totalTaskSend8149}");
-            Logger.LogInfor($"totalRequestAlias = {_testProcess.totalRequestAlias}");
-            Logger.LogInfor($"totalTaskSend8149 = {_testProcess.totalTaskSend8149}");
-            Logger.LogInfor($"totalRequest8x49 = {_testProcess.totalRequest8x49}");
+                Logger.LogInfor($"totalTaskSendAlias = {System.Configuration.ConfigurationManager.AppSettings["totalTaskSendAlias"]}.");
+                Logger.LogInfor($"totalRequestPerTaskAlias = {System.Configuration.ConfigurationManager.AppSettings["totalRequestAlias"]}.");
+                Logger.LogInfor($"totalTaskSend8149 = {System.Configuration.ConfigurationManager.AppSettings["totalTaskSend8149"]}.");
+                Logger.LogInfor($"totalRequestPerTask8x49 = {System.Configuration.ConfigurationManager.AppSettings["totalRequest8x49"]}.");
 
-            _testProcess.Run();
+                Console.WriteLine($"Test service for merchant: {merchant}.");
+                Logger.LogInfor($"Test service for merchant: {merchant}.");
+                Stopwatch watch = new Stopwatch();
+                watch.Start();
+                switch (merchant)
+                {
+                    case "VPB":
+                        {
+                            var _testProcess = new TestProcessSendSsmsVPB();
+                            _testProcess.Run();
+                            break;
+                        }
+                    default:
+                        {
+                            Console.WriteLine($"There is no merchant config.");
+                            Logger.LogInfor($"There is no merchant config.");
+                            break;
+                        }
+                }
+                watch.Stop();
 
-            watch.Stop();
-            var totalMilliSecond = watch.ElapsedMilliseconds;
-            var sc = watch.Elapsed.TotalSeconds;
-            Console.WriteLine($"Test service process taken {sc.ToString()} Seconds");
-            Logger.LogInfor($"Test service process taken {sc.ToString()} Seconds");
-            Console.WriteLine("End test service");
-            Console.ReadKey();
+                var totalMilliSecond = watch.ElapsedMilliseconds;
+                var totalSecond = watch.Elapsed.TotalSeconds.ToString();
+                Console.WriteLine($"Test Sms service for merchant {merchant}  taken {totalSecond} Seconds.");
+                Logger.LogInfor($"Test Sms service for merchant {merchant} taken {totalSecond} Seconds.");
+                Console.WriteLine($"End Sms service for merchant {merchant}");
+                Console.ReadKey();
+            }
+            catch
+            {
+                Console.WriteLine($"Test Sms service for merchant {merchant} Exception.");
+            }
         }
     }
 }

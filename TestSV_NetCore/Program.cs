@@ -14,34 +14,15 @@ namespace TestSV_NetCore
             try
             {
                 var builder = new ConfigurationBuilder();
-                BuildConfiguration(builder);
+                Startup.BuildConfiguration(builder);
 
-                var host = Host.CreateDefaultBuilder()
-                    .ConfigureServices((context, services) =>
-                    {
-                        services.AddTransient<ITest, Test>()
-                        .AddSingleton(typeof(ILogger<>), typeof(Logger<>))
-                        .AddLogging()
-                        .BuildServiceProvider();
 
-                    })
-                    .Build();
 
-                var sv = ActivatorUtilities.CreateInstance<Test>(host.Services);
-                sv.run();
+              
             }
-            catch (Exception eex)
+            catch
             {
-                throw;
             }
-        }
-
-        static void BuildConfiguration(IConfigurationBuilder builder)
-        {
-            builder.SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
-                    .AddEnvironmentVariables();
         }
     }
     public class Test : ITest

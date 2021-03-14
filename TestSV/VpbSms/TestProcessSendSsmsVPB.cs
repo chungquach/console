@@ -6,9 +6,17 @@ using System.Threading.Tasks;
 
 namespace TestSV
 {
-    public class TestProcess
+    public class TestProcessSendSsmsVPB
     {
-        public int totalTaskSendAlias, totalTaskSend8149,totalRequestAlias, totalRequest8x49;
+        private int totalTaskSendAlias, totalTaskSend8149,totalRequestAlias, totalRequest8x49;
+
+        public TestProcessSendSsmsVPB()
+        {
+            totalTaskSendAlias = int.Parse(System.Configuration.ConfigurationManager.AppSettings["totalTaskSendAlias"]);
+            totalRequestAlias = int.Parse(System.Configuration.ConfigurationManager.AppSettings["totalRequestAlias"]);
+            totalTaskSend8149 = int.Parse(System.Configuration.ConfigurationManager.AppSettings["totalTaskSend8149"]);
+            totalRequest8x49 = int.Parse(System.Configuration.ConfigurationManager.AppSettings["totalRequest8x49"]);
+        }
         public void Run()
         {
             List<Task> lstTask = new List<Task>();
